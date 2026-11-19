@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Android Security Lab</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  padding: 24px;
+  background: #080d18;
+  color: #e8efff;
+  font-family: Arial, sans-serif;
+}
+.container {
+  max-width: 500px;
+  margin: 30px auto;
+  padding: 22px;
+  background: #121c2e;
+  border: 1px solid #293b59;
+  border-radius: 18px;
+}
+h1 { color: #70a5ff; }
+p { color: #aab8ce; }
+button {
+  width: 100%;
+  padding: 14px;
+  margin-top: 12px;
+  border: 0;
+  border-radius: 10px;
+  background: #376bea;
+  color: white;
+  font-size: 16px;
+}
+textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 12px;
+  border-radius: 10px;
+  background: #080d18;
+  color: white;
+  border: 1px solid #40516b;
+}
+.result {
+  margin-top: 16px;
+  padding: 14px;
+  background: #080d18;
+  border-radius: 10px;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>ANDROID SECURITY LAB</h1>
+  <p>Unicode Processing Test</p>
+
+  <textarea id="input"
+    placeholder="Masukkan teks untuk diuji..."></textarea>
+
+  <button onclick="testText()">Jalankan Pengujian</button>
+
+  <div class="result" id="result">
+    Status: Menunggu pengujian
+  </div>
+</div>
+
+<script>
+function testText() {
+  const text = document.getElementById("input").value;
+  const result = document.getElementById("result");
+
+  const start = performance.now();
+  const characters = Array.from(text);
+  const bytes = new TextEncoder().encode(text).length;
+  const elapsed = performance.now() - start;
+
+  result.textContent =
+    "Pengujian selesai\n" +
+    "Jumlah karakter: " + characters.length + "\n" +
+    "Ukuran UTF-8: " + bytes + " byte\n" +
+    "Waktu pemrosesan: " + elapsed.toFixed(3) + " ms";
+}
+</script>
+</body>
+</html>
