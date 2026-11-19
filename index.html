@@ -2,86 +2,75 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Android Security Lab</title>
-<style>
-* { box-sizing: border-box; }
-body {
-  margin: 0;
-  padding: 24px;
-  background: #080d18;
-  color: #e8efff;
-  font-family: Arial, sans-serif;
-}
-.container {
-  max-width: 500px;
-  margin: 30px auto;
-  padding: 22px;
-  background: #121c2e;
-  border: 1px solid #293b59;
-  border-radius: 18px;
-}
-h1 { color: #70a5ff; }
-p { color: #aab8ce; }
-button {
-  width: 100%;
-  padding: 14px;
-  margin-top: 12px;
-  border: 0;
-  border-radius: 10px;
-  background: #376bea;
-  color: white;
-  font-size: 16px;
-}
-textarea {
-  width: 100%;
-  min-height: 100px;
-  padding: 12px;
-  border-radius: 10px;
-  background: #080d18;
-  color: white;
-  border: 1px solid #40516b;
-}
-.result {
-  margin-top: 16px;
-  padding: 14px;
-  background: #080d18;
-  border-radius: 10px;
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080d18">
+  <title>Android Security Lab</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="container">
-  <h1>ANDROID SECURITY LAB</h1>
-  <p>Unicode Processing Test</p>
 
-  <textarea id="input"
-    placeholder="Masukkan teks untuk diuji..."></textarea>
+  <main class="container">
+    <header>
+      <div class="status">
+        <span class="status-dot"></span>
+        SYSTEM ONLINE
+      </div>
+      <h1>ANDROID <span>SECURITY LAB</span></h1>
+      <p>Unicode Processing & Device Testing</p>
+    </header>
 
-  <button onclick="testText()">Jalankan Pengujian</button>
+    <section class="panel">
+      <h2>Unicode Analyzer</h2>
+      <p>Masukkan teks untuk dianalisis.</p>
 
-  <div class="result" id="result">
-    Status: Menunggu pengujian
-  </div>
-</div>
+      <textarea id="input"
+        placeholder="Masukkan teks di sini..."></textarea>
 
-<script>
-function testText() {
-  const text = document.getElementById("input").value;
-  const result = document.getElementById("result");
+      <div class="buttons">
+        <button id="testBtn">Jalankan Pengujian</button>
+        <button id="analyzeBtn" class="secondary">
+          Analisis Unicode
+        </button>
+      </div>
+    </section>
 
-  const start = performance.now();
-  const characters = Array.from(text);
-  const bytes = new TextEncoder().encode(text).length;
-  const elapsed = performance.now() - start;
+    <section class="panel">
+      <h2>Hasil Pengujian</h2>
+      <div class="stats">
+        <div class="stat">
+          <span>Karakter</span>
+          <strong id="charCount">0</strong>
+        </div>
+        <div class="stat">
+          <span>Ukuran UTF-8</span>
+          <strong id="byteCount">0 B</strong>
+        </div>
+        <div class="stat">
+          <span>Waktu</span>
+          <strong id="timeCount">0 ms</strong>
+        </div>
+      </div>
+      <div id="result" class="result">
+        Menunggu pengujian...
+      </div>
+    </section>
 
-  result.textContent =
-    "Pengujian selesai\n" +
-    "Jumlah karakter: " + characters.length + "\n" +
-    "Ukuran UTF-8: " + bytes + " byte\n" +
-    "Waktu pemrosesan: " + elapsed.toFixed(3) + " ms";
-}
-</script>
+    <section class="panel">
+      <h2>Riwayat Pengujian</h2>
+      <div id="history">
+        Belum ada riwayat.
+      </div>
+      <button id="clearBtn" class="secondary">
+        Hapus Riwayat
+      </button>
+    </section>
+
+    <footer>
+      ANDROID SECURITY LAB · LOCAL TESTING
+    </footer>
+  </main>
+
+  <script src="script.js"></script>
 </body>
 </html>
