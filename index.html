@@ -3,74 +3,86 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#080d18">
-  <title>Android Security Lab</title>
+  <title>Android Security Lab 2.0</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<main class="container">
 
-  <main class="container">
-    <header>
-      <div class="status">
-        <span class="status-dot"></span>
-        SYSTEM ONLINE
+  <header>
+    <div class="status">
+      <span class="status-dot"></span>
+      SYSTEM ONLINE
+    </div>
+    <h1>ANDROID <span>SECURITY LAB</span></h1>
+    <p>Unicode Analysis & Device Benchmark</p>
+  </header>
+
+  <section class="panel">
+    <h2>Device Information</h2>
+    <label for="deviceName">Nama perangkat</label>
+    <input id="deviceName" placeholder="Contoh: HP 1">
+    <div id="deviceInfo" class="result"></div>
+  </section>
+
+  <section class="panel">
+    <h2>Unicode Analyzer</h2>
+    <textarea id="input" placeholder="Masukkan teks..."></textarea>
+    <button id="testBtn">Jalankan Pengujian</button>
+    <button id="analyzeBtn" class="secondary">Analisis Unicode</button>
+
+    <div class="stats">
+      <div class="stat">
+        <span>Karakter</span>
+        <strong id="charCount">0</strong>
       </div>
-      <h1>ANDROID <span>SECURITY LAB</span></h1>
-      <p>Unicode Processing & Device Testing</p>
-    </header>
-
-    <section class="panel">
-      <h2>Unicode Analyzer</h2>
-      <p>Masukkan teks untuk dianalisis.</p>
-
-      <textarea id="input"
-        placeholder="Masukkan teks di sini..."></textarea>
-
-      <div class="buttons">
-        <button id="testBtn">Jalankan Pengujian</button>
-        <button id="analyzeBtn" class="secondary">
-          Analisis Unicode
-        </button>
+      <div class="stat">
+        <span>Ukuran</span>
+        <strong id="byteCount">0 B</strong>
       </div>
-    </section>
-
-    <section class="panel">
-      <h2>Hasil Pengujian</h2>
-      <div class="stats">
-        <div class="stat">
-          <span>Karakter</span>
-          <strong id="charCount">0</strong>
-        </div>
-        <div class="stat">
-          <span>Ukuran UTF-8</span>
-          <strong id="byteCount">0 B</strong>
-        </div>
-        <div class="stat">
-          <span>Waktu</span>
-          <strong id="timeCount">0 ms</strong>
-        </div>
+      <div class="stat">
+        <span>Waktu</span>
+        <strong id="timeCount">0 ms</strong>
       </div>
-      <div id="result" class="result">
-        Menunggu pengujian...
-      </div>
-    </section>
+    </div>
 
-    <section class="panel">
-      <h2>Riwayat Pengujian</h2>
-      <div id="history">
-        Belum ada riwayat.
-      </div>
-      <button id="clearBtn" class="secondary">
-        Hapus Riwayat
-      </button>
-    </section>
+    <div id="result" class="result">
+      Menunggu pengujian...
+    </div>
+  </section>
 
-    <footer>
-      ANDROID SECURITY LAB · LOCAL TESTING
-    </footer>
-  </main>
+  <section class="panel">
+    <h2>Device Benchmark</h2>
+    <p>Pengujian komputasi lokal dengan beban terbatas.</p>
+    <button id="benchmarkBtn">Mulai Benchmark</button>
+    <div id="benchmarkResult" class="result">
+      Belum ada benchmark.
+    </div>
+  </section>
 
-  <script src="script.js"></script>
+  <section class="panel">
+    <h2>Device Comparison</h2>
+    <p>Bandingkan hasil benchmark dari dua perangkat.</p>
+
+    <label for="compareCode">Masukkan kode hasil HP lain</label>
+    <textarea id="compareCode" placeholder="Tempel kode benchmark di sini..."></textarea>
+
+    <button id="compareBtn">Bandingkan Perangkat</button>
+    <div id="compareResult" class="result">
+      Menunggu data pembanding.
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Riwayat Pengujian</h2>
+    <div id="history">Belum ada riwayat.</div>
+    <button id="clearBtn" class="secondary">Hapus Riwayat</button>
+  </section>
+
+  <footer>ANDROID SECURITY LAB · VERSION 2.0</footer>
+</main>
+<script src="script.js"></script>
 </body>
 </html>
