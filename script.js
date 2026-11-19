@@ -1,18 +1,54 @@
 
-const input = document.getElementById("input");
-const result = document.getElementById("result");
+const $ = id => document.getElementById(id);
 
-const charCount = document.getElementById("charCount");
-const byteCount = document.getElementById("byteCount");
-const timeCount = document.getElementById("timeCount");
-
-const historyBox = document.getElementById("history");
+const input = $("input");
+const result = $("result");
+const historyBox = $("history");
 
 let historyData = [];
+let latestBenchmark = null;
 
+function addHistory(title, detail) {
+  historyData.unshift({ title, detail });
+  historyData = historyData.slice(0, 10);
+  renderHistory();
+}
+
+function renderHistory() {
+  historyBox.replaceChildren();
+
+  if (!historyData.length) {
+    historyBox.textContent = "Belum ada riwayat.";
+    return;
+  }
+
+  historyData.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "history-item";
+    div.textContent = item.title + "\n" + item.detail;
+    historyBox.appendChild(div);
+  });
+}
+
+// Device information
+const deviceInfo = {
+  device: navigator.userAgent,
+  platform: navigator.platform || "Tidak diketahui",
+  cores: navigator.hardwareConcurrency || "Tidak tersedia",
+  memory: navigator.deviceMemory || "Tidak tersedia"
+};
+
+$("deviceInfo").textContent =
+  "Platform: " + deviceInfo.platform +
+  "\nLogical cores: " + deviceInfo.cores +
+  "\nMemory estimate: " +
+  (typeof deviceInfo.memory === "number"
+    ? deviceInfo.memory + " GB"
+    : deviceInfo.memory);
+
+// Unicode testing
 function testText() {
   const text = input.value;
-
   const start = performance.now();
 
   const chars = Array.from(text);
@@ -20,20 +56,20 @@ function testText() {
 
   const elapsed = performance.now() - start;
 
-  charCount.textContent = chars.length;
-  byteCount.textContent = bytes + " B";
-  timeCount.textContent = elapsed.toFixed(3) + " ms";
+  $("charCount").textContent = chars.length;
+  $("byteCount").textContent = bytes + " B";
+  $("timeCount").textContent = elapsed.toFixed(3) + " ms";
 
   result.textContent =
     "PENGUJIAN SELESAI\n\n" +
-    "Status: Berhasil\n" +
-    "Jumlah karakter: " + chars.length + "\n" +
-    "Ukuran UTF-8: " + bytes + " byte\n" +
-    "Waktu pemrosesan: " + elapsed.toFixed(3) + " ms";
+    "Karakter: " + chars.length +
+    "\nUkuran UTF-8: " + bytes + " byte" +
+    "\nWaktu: " + elapsed.toFixed(3) + " ms";
 
-  addHistory(chars.length, bytes, elapsed);
+  addHistory("Unicode Test", chars.length + " karakter, " + bytes + " byte");
 }
 
+// Unicode analysis
 function analyzeUnicode() {
   const chars = Array.from(input.value);
 
@@ -43,65 +79,111 @@ function analyzeUnicode() {
       .toUpperCase()
       .padStart(4, "0");
 
-    return (
-      (index + 1) + ". " +
-      JSON.stringify(char) +
-      " = U+" + code
-    );
+    return (index + 1) + ". " +
+      JSON.stringify(char) + " = U+" + code;
   });
 
   result.textContent =
     "UNICODE ANALYZER\n\n" +
-    "Jumlah karakter: " + chars.length +
-    "\n\n" +
+    "Total: " + chars.length + " karakter\n\n" +
     (details.join("\n") || "Tidak ada karakter.") +
-    (chars.length > 100
-      ? "\n\nMenampilkan 100 karakter pertama."
-      : "");
+    (chars.length > 100 ? "\n\nMenampilkan 100 pertama." : "");
 }
 
-function addHistory(chars, bytes, elapsed) {
-  historyData.unshift({
-    chars,
-    bytes,
-    elapsed: elapsed.toFixed(3)
-  });
+// Bounded local benchmark
+async function runBenchmark() {
+  const button = $("benchmarkBtn");
+  button.disabled = true;
+  $("benchmarkResult").textContent = "Benchmark berjalan...";
 
-  historyData = historyData.slice(0, 10);
+  // Yield to browser before computation
+  await new Promise(resolve => setTimeout(resolve, 50));
 
-  renderHistory();
-}
+  const start = performance.now();
+  let checksum = 0;
 
-function renderHistory() {
-  historyBox.replaceChildren();
-
-  if (historyData.length === 0) {
-    historyBox.textContent = "Belum ada riwayat.";
-    return;
+  // Fixed, modest workload
+  for (let i = 0; i < 300000; i++) {
+    checksum = (checksum + Math.sqrt(i + 1)) % 1000003;
   }
 
-  historyData.forEach((item, index) => {
-    const div = document.createElement("div");
-    div.className = "history-item";
+  const elapsed = performance.now() - start;
 
-    div.textContent =
-      "Pengujian " + (index + 1) +
-      "\nKarakter: " + item.chars +
-      "\nUkuran: " + item.bytes + " byte" +
-      "\nWaktu: " + item.elapsed + " ms";
+  latestBenchmark = {
+    deviceName: $("deviceName").value.trim() || "Perangkat tanpa nama",
+    elapsed: Number(elapsed.toFixed(3)),
+    cores: deviceInfo.cores,
+    checksum
+  };
 
-    historyBox.appendChild(div);
-  });
+  const code = btoa(unescape(encodeURIComponent(
+    JSON.stringify(latestBenchmark)
+  )));
+
+  $("benchmarkResult").textContent =
+    "BENCHMARK SELESAI\n\n" +
+    "Perangkat: " + latestBenchmark.deviceName +
+    "\nWaktu: " + latestBenchmark.elapsed + " ms" +
+    "\nChecksum: " + checksum +
+    "\n\nKODE PERBANDINGAN:\n" + code;
+
+  addHistory(
+    "Device Benchmark",
+    latestBenchmark.deviceName + " — " + elapsed.toFixed(3) + " ms"
+  );
+
+  button.disabled = false;
 }
 
-document.getElementById("testBtn")
-  .addEventListener("click", testText);
+// Compare benchmark results
+function compareDevices() {
+  try {
+    const code = $("compareCode").value.trim();
+    const other = JSON.parse(
+      decodeURIComponent(escape(atob(code)))
+    );
 
-document.getElementById("analyzeBtn")
-  .addEventListener("click", analyzeUnicode);
+    if (
+      !latestBenchmark ||
+      typeof other.elapsed !== "number" ||
+      !Number.isFinite(other.elapsed) ||
+      other.elapsed <= 0
+    ) {
+      throw new Error("Data benchmark tidak valid.");
+    }
 
-document.getElementById("clearBtn")
-  .addEventListener("click", () => {
-    historyData = [];
-    renderHistory();
-  });
+    const current = latestBenchmark;
+
+    let faster;
+
+    if (current.elapsed < other.elapsed) {
+      faster = current.deviceName;
+    } else if (other.elapsed < current.elapsed) {
+      faster = other.deviceName;
+    } else {
+      faster = "Hasil sama";
+    }
+
+    $("compareResult").textContent =
+      "HASIL PERBANDINGAN\n\n" +
+      current.deviceName + ": " + current.elapsed + " ms\n" +
+      other.deviceName + ": " + other.elapsed + " ms\n\n" +
+      "Waktu lebih rendah: " + faster +
+      "\n\nCatatan: hasil dipengaruhi kondisi browser, " +
+      "suhu, dan aktivitas perangkat.";
+
+  } catch (error) {
+    $("compareResult").textContent =
+      "Tidak dapat membaca kode.\nPastikan kode benchmark lengkap dan benar.";
+  }
+}
+
+$("testBtn").addEventListener("click", testText);
+$("analyzeBtn").addEventListener("click", analyzeUnicode);
+$("benchmarkBtn").addEventListener("click", runBenchmark);
+$("compareBtn").addEventListener("click", compareDevices);
+
+$("clearBtn").addEventListener("click", () => {
+  historyData = [];
+  renderHistory();
+});
